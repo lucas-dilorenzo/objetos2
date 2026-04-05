@@ -1,0 +1,28 @@
+P: ¿Por qué RedSocial usa Map<String, Usuario> en lugar de List<Usuario>?
+R: Porque el Map usa el screenName como clave única — garantiza que no
+ haya duplicados y permite buscar un usuario directamente sin recorrer
+  toda la lista. Es el equivalente al Dictionary en Swift.
+
+P: ¿Por qué ReTweet hereda de Tweet?
+R: Porque ReTweet es un Tweet — cumple la relación "es un". Al heredar,
+ toma el texto del tweet original (super(tweetOrigen.getTexto())), 
+ reutiliza la validación de 1..280 caracteres y permite que Usuario 
+ tenga una sola lista List<Tweet> con tweets y retweets mezclados gracias 
+ al polimorfismo.
+
+P: ¿En qué orden se elimina un usuario y por qué importa el orden?
+R: 1) RedSocial limpia retweets huérfanos en otros usuarios, 
+2) Usuario elimina sus propios tweets, 
+3) RedSocial elimina al usuario del mapa. El orden importa porque si 
+eliminás al usuario primero, perdés la referencia a sus tweets 
+y no podés limpiar los retweets huérfanos en otros usuarios.
+
+P: ¿Quién es responsable de cada paso del borrado?
+R: RedSocial coordina (es la única que conoce a todos los usuarios),
+ Usuario limpia sus propios tweets (es el dueño). 
+ Cada clase tiene su responsabilidad.
+
+P: ¿Por qué Tweet lanza IllegalArgumentException en el constructor en lugar de retornar un String de error?
+R: Porque si el texto es inválido el objeto no debería existir. 
+Con la excepción en el constructor garantizás que todo objeto 
+Tweet que exista es siempre válido — esto se llama invariante de clase.

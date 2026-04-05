@@ -1,0 +1,21 @@
+P: ¿Por qué no usamos instanceof en Piedra Papel Tijera?
+R: Es un bad smell. Usamos Double Dispatch — 
+cada objeto es responsable de resolverse a sí mismo
+ sin necesidad de preguntar el tipo.
+
+P: ¿Por qué es necesario .invertir() en juegaContra()?
+R: Porque contraX() devuelve el resultado desde el punto 
+de vista de otra, no de this. Sin invertir() los resultados
+ son al revés — si otra pierde, this debería ganar.
+
+P: ¿Qué hay que modificar para agregar Lagarto y Spock? ¿Qué problema trae?
+R: Hay que modificar Jugada (agregar métodos abstractos 
+contraLagarto y contraSpock) y todas las subclases existentes. 
+Viola el Open/Closed Principle — las clases deberían estar cerradas
+ para modificación. Es un tradeoff aceptable porque la alternativa 
+ con if/instanceof es peor.
+
+P: ¿Dónde se aplica polimorfismo y por qué es importante?
+R: En todas las subclases de Jugada. El mismo mensaje (juegaContra,
+ contraX) es respondido diferente por cada subclase.
+ Es lo que hace posible el Double Dispatch y elimina los if.
