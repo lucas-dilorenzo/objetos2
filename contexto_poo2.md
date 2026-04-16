@@ -496,6 +496,33 @@ Rename Method y Rename Parameter — cambios archivo por archivo:
 - **Iteración 1:** Duplicate Code en campos → Extract Superclass + Pull Up Field de `nombre`, `apellido`, `sueldoBasico` a clase abstracta `Empleado` + Encapsulate Field (protected)
 - **Iteración 2:** Duplicate Code en `(sueldoBasico * 0.13)` → Extract Method `descuento()` + Pull Up Method a `Empleado`
 - **Iteración 3:** campos `horasTrabajadas` y `cantidadHijos` siguen siendo públicos → Encapsulate Field (protected)
+- **Iteración 4 (Form Template Method):** `sueldo()` tiene estructura común en todas las subclases (`sueldoBasico + extras - descuento()`). Se sube la estructura a `Empleado` y se declara `extras()` abstracto:
+
+```java
+// Empleado
+public double sueldo() {
+    return this.sueldoBasico + extras() - descuento();
+}
+protected abstract double extras();
+protected double descuento() { return sueldoBasico * 0.13; }
+
+// EmpleadoTemporario
+protected double extras() {
+    return (horasTrabajadas * 500) + (cantidadHijos * 1000);
+}
+
+// EmpleadoPlanta
+protected double extras() {
+    return cantidadHijos * 2000;
+}
+
+// EmpleadoPasante
+protected double extras() {
+    return 0;
+}
+```
+
+- **Relación con patrones:** Form Template Method es el refactoring que lleva al patrón Template Method (Unidad 2)
 
 #### 6.2 Juego
 
@@ -513,15 +540,20 @@ Rename Method y Rename Parameter — cambios archivo por archivo:
 
 ## Refactorings adicionales vistos en ejercicios
 
-| Refactoring                    | Descripción                                             |
-| ------------------------------ | ------------------------------------------------------- |
-| **Rename Method**              | Renombrar un método para que exprese mejor su propósito |
-| **Rename Parameter**           | Renombrar un parámetro para mayor claridad              |
-| **Rename Variable**            | Renombrar una variable local. Afecta solo su scope      |
-| **Encapsulate Field**          | Campo público → privado + getter/setter                 |
-| **Extract Superclass**         | Extraer comportamiento/estado común en una superclase   |
-| **Change Access Modifier**     | Cambiar visibilidad (ej: private → protected)           |
-| **Replace Loop with Pipeline** | Reemplazar un for con streams de Java                   |
+| Refactoring                    | Smell que resuelve   | Descripción                                                                                                                               |
+| ------------------------------ | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **Rename Method**              | Nombres ilegibles    | Renombrar un método para que exprese mejor su propósito                                                                                   |
+| **Rename Parameter**           | Nombres ilegibles    | Renombrar un parámetro para mayor claridad                                                                                                |
+| **Rename Variable**            | Nombres ilegibles    | Renombrar una variable local. Afecta solo su scope                                                                                        |
+| **Encapsulate Field**          | Encapsulamiento roto | Campo público → privado + getter/setter                                                                                                   |
+| **Extract Superclass**         | Duplicate Code       | Extraer comportamiento/estado común en una superclase                                                                                     |
+| **Change Access Modifier**     | —                    | Cambiar visibilidad (ej: private → protected)                                                                                             |
+| **Replace Loop with Pipeline** | Long Method          | Reemplazar un for con streams de Java                                                                                                     |
+| **Form Template Method**       | Duplicate Code       | Subir estructura común de un método a la superclase, dejando los pasos variables como métodos abstractos. Lleva al patrón Template Method |
+| **Extract Class**              | Large Class          | Extraer responsabilidades en una nueva clase                                                                                              |
+| **Introduce Parameter Object** | Long Parameter List  | Reemplazar grupo de parámetros relacionados con un objeto                                                                                 |
+| **Hide Delegate**              | Message Chains       | Ocultar la cadena de delegaciones detrás de un método                                                                                     |
+| **Push Down Method/Field**     | Refused Bequest      | Mover método/campo de superclase a las subclases que lo usan                                                                              |
 
 ---
 
@@ -586,4 +618,4 @@ personal.stream()
 
 ---
 
-_Última actualización: agregados ejercicios 1 a 6.2 del cuadernillo + secciones de visibilidad Java y streams_
+_Última actualización: agregado Form Template Method en 6.1 + catálogo de refactorings completo_
